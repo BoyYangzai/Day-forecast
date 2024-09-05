@@ -41,7 +41,7 @@ export default function RootLayout({
 
   return (
     <main className="w-full h-screen">
-      <nav className="h-20 flex justify-center items-center  bg-white border-b border-gray-100 shadow-sm dark:bg-gray-900">
+      {/* <nav className="h-20 flex justify-center items-center  bg-white border-b border-gray-100 shadow-sm dark:bg-gray-900">
         <div className="w-full flex justify-between items-center">
           <Image
             src={"/img/logo.jpg"}
@@ -117,7 +117,7 @@ export default function RootLayout({
             </motion.div>
           ))}
         </div>
-      )}
+      )} */}
       {children}
     </main>
   );
