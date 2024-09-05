@@ -1,10 +1,9 @@
-"use client";
+'use client';
 import React, { useState, useEffect } from "react";
 import {
   Layout,
   Input,
   Card,
-  Button,
   Row,
   Col,
   Spin,
@@ -21,9 +20,42 @@ const { Search } = Input;
 const apiKey = "a1342faff3f6848782878d38ed9ba25a"; // Get your API key from OpenWeather API
 const defaultCity = "10001"; // Default postal code is New York
 
+// Type definitions for the weather and forecast data structures
+interface WeatherData {
+  name: string;
+  sys: {
+    country: string;
+    sunrise: number;
+    sunset: number;
+  };
+  weather: {
+    description: string;
+  }[];
+  main: {
+    temp: number;
+    temp_max: number;
+    temp_min: number;
+    humidity: number;
+    pressure: number;
+  };
+  wind: {
+    speed: number;
+  };
+}
+
+interface ForecastData {
+  dt_txt: string;
+  weather: {
+    description: string;
+  }[];
+  main: {
+    temp: number;
+  };
+}
+
 function Home() {
-  const [weatherData, setWeatherData] = useState(null);
-  const [forecastData, setForecastData] = useState([]);
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+  const [forecastData, setForecastData] = useState<ForecastData[]>([]);
   const [loading, setLoading] = useState(false);
   const [showMore, setShowMore] = useState(false);
   const [zipCode, setZipCode] = useState(defaultCity);
@@ -32,25 +64,25 @@ function Home() {
     fetchWeatherData(zipCode);
   }, []);
 
-  const fetchWeatherData = async (zip) => {
+  const fetchWeatherData = async (zip: string) => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?zip=${zip}&appid=${apiKey}`,
+        `https://api.openweathermap.org/data/2.5/weather?zip=${zip}&appid=${apiKey}&units=metric`
       );
       const forecastResponse = await axios.get(
-        `https://api.openweathermap.org/data/2.5/forecast?zip=${zip},us&appid=${apiKey}&units=metric`,
+        `https://api.openweathermap.org/data/2.5/forecast?zip=${zip},us&appid=${apiKey}&units=metric`
       );
 
-      setWeatherData(response.data);
-      setForecastData(forecastResponse.data.list.slice(0, 7)); // 7-day forecast
-    } catch (error) {
+      setWeatherData(response.data as WeatherData);
+      setForecastData(forecastResponse.data.list.slice(0, 7) as ForecastData[]); // 7-day forecast
+    } catch (error: any) {
       message.error(`Error: ${error?.response?.data?.message}`);
     }
     setLoading(false);
   };
 
-  const handleSearch = (value) => {
+  const handleSearch = (value: string) => {
     setZipCode(value);
     fetchWeatherData(value);
   };
